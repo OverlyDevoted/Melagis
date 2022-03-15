@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - GameManager
+  - MainMenu
+  - ServerConnection
+  - RetryConnection
   layers:
   - Default
   - TransparentFX

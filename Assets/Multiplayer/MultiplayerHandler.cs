@@ -4,6 +4,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using WebSocketSharp;
 using System;
+/*
+ Try adding a function that adds a delegate to a method name. 
+So whenever the server send a certain method it executes the said delegate. Somewhat of a dictionary of functions 
+It would make it so that the multiplayer handler performs less logic handling and it ill play more of a intermediary role
+ */
+
 [Serializable]
 public class MultiplayerHandler : MonoBehaviour
 {
@@ -73,9 +79,9 @@ public class MultiplayerHandler : MonoBehaviour
                     switch (method.name)
                     {
                         case "connect":
-                            
+
                             client = JsonUtility.FromJson<Client>(e.Data);
-                            OnToDo += () => { OnServerMessage?.Invoke(this, new OnServerMessageEventArgs("Successfully connected to the server. Your ID is " + client.clientID)); };
+                            OnToDo += () => { AddMessage("Successfully connected to the server. Your ID is " + client.clientID); };
                             break;
 
                         case "create":
@@ -84,35 +90,76 @@ public class MultiplayerHandler : MonoBehaviour
                             break;
                         case "join":
                             game = JsonUtility.FromJson<Game>(e.Data);
-                            OnToDo += () => { 
-                                OnJoinedGame.Invoke();
-                                OnServerMessage?.Invoke(this, new OnServerMessageEventArgs("Successfully joined a lobby. Lobby ID is <color=green>" + game.gameID + "</color>"
-                                    +"\n<i>For other players to join the lobby send them the lobby ID</i>"));
-                                if (game.clients.Length < 2)
-                                    return;
-                                OnServerMessage?.Invoke(this, new OnServerMessageEventArgs("Other players in the lobby:\n"));
-                                foreach (Client c in game.clients)
-                                {
-                                    if(c.clientID != client.clientID)
-                                    {
-                                        OnServerMessage?.Invoke(this, new OnServerMessageEventArgs(c.clientID + " with prio: " + client.prio));
-                                    }
-                                }
-                            };
-                            break;
-                        case "playerJoined":
-                            Game temp = JsonUtility.FromJson<Game>(e.Data);
-                            game.clients = temp.clients;
                             OnToDo += () =>
                             {
+                                OnJoinedGame.Invoke();
+                                AddMessage("Successfully joined a lobby. Lobby ID is <color=green>" + game.gameID + "</color>"
+                                    + "\n<i>For other players to join the lobby send them the lobby ID</i>");
+                                if (game.clients.Count < 2)
+                                    return;
+                                AddMessage("Other players in the lobby:");
                                 foreach (Client c in game.clients)
                                 {
                                     if (c.clientID != client.clientID)
                                     {
-                                        OnServerMessage?.Invoke(this, new OnServerMessageEventArgs("Player " + c.clientID + " joined with prio: " + c.prio));
+                                        AddMessage(c.clientID + " with prio: " + c.prio);
+                                        continue;
                                     }
+                                    client.prio = c.prio;
                                 }
                             };
+                            break;
+                        case "playerJoined":
+                            {
+                                Client temp = JsonUtility.FromJson<Client>(e.Data);
+                                temp.prio = game.clients.Count;
+                                temp.ready = false;
+                                game.clients.Add(temp);
+                                OnToDo += () =>
+                                {
+                                    AddMessage("Player " + temp.clientID + " has joined with prio " + temp.prio);
+                                };
+                            }
+                            break;
+                        case "playerDisconnected":
+                            {
+                                Client temp = JsonUtility.FromJson<Client>(e.Data);
+                                if (temp.prio != client.prio)
+                                {
+                                    OnToDo += () =>
+                                    {
+                                        client.prio = temp.prio;
+                                        AddMessage("Your new prio is: " + client.prio);
+                                        game.ChangePrio(client.clientID, client.prio);
+                                    };
+                                }
+                                game.RemoveClient(temp.clientID);
+                                AddMessage("Player " + temp.clientID + " has disconnected");
+                            }
+                            break;
+                        case "ready":
+                            {
+                                Client temp = JsonUtility.FromJson<Client>(e.Data);
+                                bool isReady = game.ReadyClient(temp.clientID);
+                                OnToDo += () =>
+                                {
+                                    string answer = "";
+                                    if (isReady)
+                                        answer = "ready";
+                                    else
+                                        answer = " not ready";
+                                    AddMessage("Player "+temp.clientID + " is " + answer);
+                                };
+                            }
+                            break;
+                        case "error":
+                            {
+                                Error error = JsonUtility.FromJson<Error>(e.Data);
+                                OnToDo += () =>
+                                {
+                                    AddMessage(error.message);
+                                };
+                            }
                             break;
 
                     }
@@ -136,9 +183,22 @@ public class MultiplayerHandler : MonoBehaviour
     }
     public void SendJoinLobby(string gameID)
     {
-        Debug.Log(gameID);
         ws.Send("{\"method\":\"join\"," +
             "\"gameID\":\""+gameID+"\"}");
+    }
+    public void SendDisconnectLobby()
+    {
+        ws.Send("{\"method\":\"disconnect\"}");
+    }
+    public void SendReady()
+    {
+        ws.Send("{\"method\":\"ready\"}");
+    }
+    public void Ready()
+    {
+        AddMessage("You ready dawg");
+        client.ready = !client.ready;
+        SendReady();
     }
     private void ResetData()
     {
@@ -148,9 +208,13 @@ public class MultiplayerHandler : MonoBehaviour
     public void LeaveLobby()
     {
         game = new Game();
-        OnServerMessage?.Invoke(this, new OnServerMessageEventArgs("Left the lobby"));
+        AddMessage("Left the lobby");
+        SendDisconnectLobby();
     }
-    
+    public void AddMessage(string message)
+    {
+        OnServerMessage?.Invoke(this, new OnServerMessageEventArgs(message));
+    }
 }
 public class OnServerMessageEventArgs : EventArgs
 {

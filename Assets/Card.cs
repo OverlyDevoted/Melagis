@@ -1,0 +1,93 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Card : MonoBehaviour
+{
+    [SerializeField] GameObject cardModel;
+    GameObject card;
+    public int value;
+    public Suits suit;
+    private void UpdateCard()
+    {
+        if (cardModel == null)
+            return;
+        char[] temp = cardModel.name.Substring(13, cardModel.name.Length - 13).ToCharArray();
+        int startIndex = 1;
+        if (char.IsNumber(temp[0]))
+        {
+            value = temp[0] - 48;
+            if (value == 1)
+            {
+                value *= 10;
+                startIndex = 2;
+            }
+        }
+        else
+        {
+            switch (temp[0])
+            {
+                case 'J':
+                    value = 11;
+                    break;
+
+                case 'Q':
+                    value = 12;
+                    break;
+
+                case 'K':
+                    value = 13;
+                    break;
+
+                case 'A':
+                    value = 14;
+                    break;
+            }
+        }
+        switch (temp[startIndex])
+        {
+            case 'C':
+                suit = Suits.Club;
+                break;
+
+            case 'D':
+                suit = Suits.Diamond;
+                break;
+
+            case 'H':
+                suit = Suits.Heart;
+                break;
+
+            case 'S':
+                suit = Suits.Spade;
+                break;
+        }
+        name = value.ToString() + temp[startIndex];
+        card = Instantiate(cardModel, transform);
+        card.transform.localScale = new Vector3(10f, 10f, 1f);
+        card.transform.Rotate(new Vector3(90f, 0f));
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    public void SetCardModel(GameObject cardModel)
+    {
+        this.cardModel = cardModel;
+        UpdateCard();
+    }
+}
+public enum Suits
+{
+    Heart,
+    Club,
+    Spade,
+    Diamond
+}

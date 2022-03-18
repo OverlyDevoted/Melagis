@@ -17,6 +17,8 @@ public class MultiplayerHandler : MonoBehaviour
     public UnityEvent OnConnecting;
     public UnityEvent OnConnected;
     public UnityEvent OnJoinedGame;
+    public UnityEvent OnStartGame;
+    public UnityEvent OnFirstPlayer;
     public ExtraButton joinButton;
     public static event EventHandler<OnServerMessageEventArgs> OnServerMessage;
 
@@ -161,7 +163,21 @@ public class MultiplayerHandler : MonoBehaviour
                                 };
                             }
                             break;
+                        case "startGame":
+                            {
+                                
+                                OnToDo += () =>
+                                {
+                                    OnStartGame.Invoke();
+                                    Debug.Log("Do");
+                                    if (client.prio == 0)
+                                    {
+                                        OnFirstPlayer.Invoke();
+                                    }
 
+                                };
+                            }
+                            break;
                     }
                     method = null;
                     webState = WebState.TYPE;
@@ -196,8 +212,17 @@ public class MultiplayerHandler : MonoBehaviour
     }
     public void Ready()
     {
-        AddMessage("You ready dawg");
-        client.ready = !client.ready;
+        client.ready = game.ReadyClient(client.clientID);
+        string message = "";
+        if(client.ready)
+        {
+            message = "You ready";
+        }
+        else
+        {
+            message = "You unreadied";
+        }
+        AddMessage(message);
         SendReady();
     }
     private void ResetData()

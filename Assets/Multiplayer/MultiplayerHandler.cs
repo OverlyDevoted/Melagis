@@ -169,12 +169,12 @@ public class MultiplayerHandler : MonoBehaviour
                                 OnToDo += () =>
                                 {
                                     OnStartGame.Invoke();
-                                    Debug.Log("Do");
+                                    OnStartGame = null;
                                     if (client.prio == 0)
                                     {
                                         OnFirstPlayer.Invoke();
+                                        OnFirstPlayer = null;
                                     }
-
                                 };
                             }
                             break;

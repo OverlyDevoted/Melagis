@@ -5,7 +5,6 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     [SerializeField] GameObject cardModel;
-    GameObject card;
     public int value;
     public Suits suit;
     private void UpdateCard()
@@ -63,9 +62,7 @@ public class Card : MonoBehaviour
                 break;
         }
         name = value.ToString() + temp[startIndex];
-        card = Instantiate(cardModel, transform);
-        card.transform.localScale = new Vector3(10f, 10f, 1f);
-        card.transform.Rotate(new Vector3(90f, 0f));
+        cardModel.AddComponent<BoxCollider>();
     }
     // Start is called before the first frame update
     void Start()

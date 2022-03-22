@@ -11,9 +11,12 @@ public class GameManager : MonoBehaviour
     public MultiplayerHandler multiplayerHandler;
     private void Awake()
     {
+        multiplayerHandler.OnStartGame.AddListener(() =>
+        {
+            SpawnDeck();
+        });
         multiplayerHandler.OnFirstPlayer.AddListener(() => {
-            deckReference.GetComponent<Deck>().ShuffleDeck();
-            //deckClass.PrintDeck();
+            deckClass.ShuffleDeck();
         });
         MultiplayerHandler.OnServerMessage += uiManager.AddMessageToLog;
     }

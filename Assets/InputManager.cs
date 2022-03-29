@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using UnityEngine.Events;
 public class InputManager : MonoBehaviour
 {
     public static InputManager instance;
     InputConfiguration inputs;
     GameObject selectedObject;
+    public UnityEvent OnClick;
     private void Awake()
     {
         inputs = new InputConfiguration();
@@ -28,6 +30,7 @@ public class InputManager : MonoBehaviour
     }
     private void CheckForObject(InputAction.CallbackContext obj)
     {
+        OnClick.Invoke();
         Ray ray = Camera.main.ScreenPointToRay(inputs.Main.Mouseposition.ReadValue<Vector2>());
         RaycastHit hit;
         if(Physics.Raycast(ray, out hit))

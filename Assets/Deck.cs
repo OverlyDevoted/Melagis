@@ -1,40 +1,109 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class Deck : MonoBehaviour
 {
-    [SerializeField] List<GameObject> cardModels;
-    List<GameObject> cards;
-    public float distBetweenCards = -0.001f;
-    public float startingZ = 0.0f;
-    // Start is called before the first frame update
+    private List<Card> deckCards;
+    public event EventHandler<OnDeckChangedEventArgs> OnCardRemoved;
+    public event EventHandler<OnDeckChangedEventArgs> OnCardAdded;
+    GameObject owner;
+
+    //add this to class diagram
+    public List<GameObject> cardModels;
+
     void Awake()
     {
-        cards = new List<GameObject>();
-        GenerateDeck();
+        deckCards = new List<Card>();
     }
-    public void GenerateDeck()
+    private void Start()
     {
-        //rework
-        
+        InitializeDeckCards();
+        ShuffleDeck();
     }
-    public void ShuffleDeck()
+    private void InitializeDeckCards()
     {
-        //rework
+        if (cardModels == null)
+            return;
 
-    }
-
-    private void CopyTo(List<GameObject> from, List<GameObject> to)
-    {
-        foreach (GameObject card in from)
+        foreach (GameObject cardModel in cardModels)
         {
-            to.Add(card);
+            deckCards.Add(new Card(cardModel));
         }
     }
-    public void PrintDeck(List<GameObject> cards)
+
+    public void ShuffleDeck()
     {
-        foreach (GameObject t in cards)
-            Debug.Log(t.name);
+        List<Card> cards = new List<Card>();
+        int length = deckCards.Count; 
+        while(length>0)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, length);
+            cards.Add(deckCards[randomIndex]);
+            deckCards.RemoveAt(randomIndex);
+            length--;
+        }
+        deckCards = cards;
+        PrintDeck();
+    }
+
+    //add this to class diagram
+    public List<Card> SplitDeck(int parts)
+    {
+        //todo function for spliting a deck into parts
+        return null;
+    }
+    public void Push(Card card, GameObject source)
+    {
+        deckCards.Add(card);
+
+        OnCardAdded?.Invoke(this, new OnDeckChangedEventArgs(card, source));
+    }
+    public Card Pop(GameObject loser)
+    {
+        Card removed = deckCards[deckCards.Count - 1];
+        deckCards.RemoveAt(deckCards.Count-1);
+        OnCardRemoved?.Invoke(this, new OnDeckChangedEventArgs(removed, loser));
+        return removed; 
+    }
+    public List<Card> GetDeck()
+    {
+        return deckCards;
+    }
+    public void AddDeck(Deck deck, GameObject from)
+    {
+        List<Card> cardsToAdd = deck.GetDeck();
+        foreach(Card card in cardsToAdd)
+        {
+            Push(card, from);
+        }
+    }
+    public GameObject GetOwner()
+    {
+        return owner;
+    }
+    public void SetOwner(GameObject newOwner)
+    {
+        owner = newOwner;
+    }
+    
+    public void PrintDeck()
+    {
+        foreach (Card card in deckCards)
+            Debug.Log(card.ToString());
     }
 }
+public class OnDeckChangedEventArgs : EventArgs {
+    Card card;
+    GameObject caller;
+    public OnDeckChangedEventArgs(Card card) {
+        this.card = card;
+        caller = null;
+    }
+    public OnDeckChangedEventArgs(Card card, GameObject caller)
+    {
+        this.card = card;
+        this.caller = caller; 
+    }
+}
+

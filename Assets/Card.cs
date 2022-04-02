@@ -7,7 +7,11 @@ public class Card : MonoBehaviour
     [SerializeField] GameObject cardModel;
     public int value;
     public Suits suit;
-    private void UpdateCard()
+    void Start()
+    {
+        UpdateCard(cardModel);
+    }
+    private void UpdateCard(GameObject cardModel)
     {
         if (cardModel == null)
             return;
@@ -64,21 +68,11 @@ public class Card : MonoBehaviour
         name = value.ToString() + temp[startIndex];
         cardModel.AddComponent<BoxCollider>();
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
     {
         
-    }
-    public void SetCardModel(GameObject cardModel)
-    {
-        this.cardModel = cardModel;
-        UpdateCard();
     }
 }
 public enum Suits

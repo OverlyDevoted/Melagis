@@ -2,25 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-public class Deck : MonoBehaviour
+public class Deck
 {
-    private List<Card> deckCards;
+    public List<Card> deckCards { get; private set; } = new List<Card>();
     public event EventHandler<OnDeckChangedEventArgs> OnCardRemoved;
     public event EventHandler<OnDeckChangedEventArgs> OnCardAdded;
-    GameObject owner;
+    public GameObject owner { get; set; }
 
     //add this to class diagram
     public List<GameObject> cardModels;
 
-    void Awake()
+    public Deck(List<GameObject>cardModels)
     {
-        deckCards = new List<Card>();
-    }
-    private void Start()
-    {
+        this.cardModels = cardModels;
         InitializeDeckCards();
-        ShuffleDeck();
     }
+
+    public Deck() { }
+
     private void InitializeDeckCards()
     {
         if (cardModels == null)
@@ -30,10 +29,14 @@ public class Deck : MonoBehaviour
         {
             deckCards.Add(new Card(cardModel));
         }
+        //PrintDeck();
     }
 
     public void ShuffleDeck()
     {
+        if (deckCards.Count==0)
+            return;
+
         List<Card> cards = new List<Card>();
         int length = deckCards.Count; 
         while(length>0)
@@ -44,51 +47,69 @@ public class Deck : MonoBehaviour
             length--;
         }
         deckCards = cards;
-        PrintDeck();
     }
 
     //add this to class diagram
-    public List<Card> SplitDeck(int parts)
+    public static List<Deck> SplitDeck(Deck deck, int parts)
     {
-        //todo function for spliting a deck into parts
-        return null;
+        if(deck.deckCards.Count < parts) return null;
+
+        List<Deck> returnDecks = new List<Deck>();
+        
+        for(int i=0;i<deck.deckCards.Count;i++)
+        {
+            if (i < parts)
+            {
+                returnDecks.Add(new Deck());
+            }
+            returnDecks[i%parts].Push(deck.deckCards[i]);
+        }
+        return returnDecks;
     }
     public void Push(Card card, GameObject source)
     {
         deckCards.Add(card);
-
         OnCardAdded?.Invoke(this, new OnDeckChangedEventArgs(card, source));
+    }
+    public void Push(Card card)
+    {
+        deckCards.Add(card);
+        OnCardAdded?.Invoke(this, new OnDeckChangedEventArgs(card, null));
     }
     public Card Pop(GameObject loser)
     {
+        if (deckCards.Count == 0)
+            return null;
         Card removed = deckCards[deckCards.Count - 1];
         deckCards.RemoveAt(deckCards.Count-1);
         OnCardRemoved?.Invoke(this, new OnDeckChangedEventArgs(removed, loser));
         return removed; 
     }
-    public List<Card> GetDeck()
+    public Card Pop()
     {
-        return deckCards;
+        if (deckCards.Count == 0)
+            return null;
+        Card removed = deckCards[deckCards.Count - 1];
+        deckCards.RemoveAt(deckCards.Count - 1);
+        OnCardRemoved?.Invoke(this, new OnDeckChangedEventArgs(removed, null));
+        return removed;
     }
     public void AddDeck(Deck deck, GameObject from)
     {
-        List<Card> cardsToAdd = deck.GetDeck();
+        List<Card> cardsToAdd = deck.deckCards;
         foreach(Card card in cardsToAdd)
         {
             Push(card, from);
         }
     }
-    public GameObject GetOwner()
-    {
-        return owner;
-    }
-    public void SetOwner(GameObject newOwner)
-    {
-        owner = newOwner;
-    }
     
     public void PrintDeck()
     {
+        if (deckCards.Count == 0)
+        {
+            Debug.Log("Empty");
+            return;
+        }
         foreach (Card card in deckCards)
             Debug.Log(card.ToString());
     }

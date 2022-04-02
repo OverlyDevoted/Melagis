@@ -104,7 +104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4082868296644380279}
-  - component: {fileID: 4082868296644380276}
+  - component: {fileID: 3716405531963372317}
   m_Layer: 0
   m_Name: Standard 52 card deck
   m_TagString: Untagged
@@ -127,7 +127,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4082868296644380276
+--- !u!114 &3716405531963372317
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,10 +136,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4082868296644380277}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f5a11d8f32bc6e4b89a2365ffef360c, type: 3}
+  m_Script: {fileID: 11500000, guid: f1d4cd32dcf312b45945b14b2962deac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cardModels:
+  - {fileID: 100000, guid: da2d1fefc52dcde4db0b9c8ab07e55a3, type: 3}
   - {fileID: 100000, guid: 270161fbc9dca6d4e9df3a22d51ebc57, type: 3}
   - {fileID: 100000, guid: db5c9937d5295c04983ef22a72d944ad, type: 3}
   - {fileID: 100000, guid: c613a166e38964249b90f3849aeecbd2, type: 3}
@@ -191,4 +192,3 @@ MonoBehaviour:
   - {fileID: 100000, guid: 36360c12a6623f94f813098c06e74a10, type: 3}
   - {fileID: 100000, guid: 2b4b8c4bb0796f04093a50f8a8b21c6c, type: 3}
   - {fileID: 100000, guid: 8fef523a36fb4384dbd542c31b34f451, type: 3}
-  - {fileID: 100000, guid: da2d1fefc52dcde4db0b9c8ab07e55a3, type: 3}

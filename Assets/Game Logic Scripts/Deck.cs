@@ -111,7 +111,7 @@ public class Deck
     {
         string answer = "";
         foreach(Card card in deckCards)
-            answer += card.ToString() + " ;";
+            answer += card.ToString() + "; ";
         return answer;
     }
 }

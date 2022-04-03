@@ -7,7 +7,13 @@ public class PlayerTableManager : MonoBehaviour
     [SerializeField]
     List<GameObject> cardModels = new List<GameObject>();
 
+    [SerializeField]
+    GameObject deckModel;
+
+
     List<Player> playerList = new List<Player>();
+    List<GameObject> playerDeckObjects = new List<GameObject>();
+
     int userIndex =0;
     private Deck tableDeck; 
     // Start is called before the first frame update
@@ -30,7 +36,11 @@ public class PlayerTableManager : MonoBehaviour
 
         //create players
         for(int i=0; i < players; i++)
+        {
             playerList.Add(new Player());
+            playerDeckObjects.Add(Instantiate(deckModel));
+            playerDeckObjects[i].name = i.ToString();
+        }
         
         //determine user index - turn order
         userIndex = Random.Range(0,players);

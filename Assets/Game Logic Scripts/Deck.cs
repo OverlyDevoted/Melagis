@@ -29,7 +29,7 @@ public class Deck
         {
             deckCards.Add(new Card(cardModel));
         }
-        //PrintDeck();
+        Debug.Log(ToString());
     }
 
     public void ShuffleDeck()
@@ -102,16 +102,17 @@ public class Deck
             Push(card, from);
         }
     }
-    
-    public void PrintDeck()
+    public static void Flush(Deck deck)
     {
-        if (deckCards.Count == 0)
-        {
-            Debug.Log("Empty");
-            return;
-        }
-        foreach (Card card in deckCards)
-            Debug.Log(card.ToString());
+        deck.deckCards.Clear();
+    }
+
+    public new string ToString()
+    {
+        string answer = "";
+        foreach(Card card in deckCards)
+            answer += card.ToString() + " ;";
+        return answer;
     }
 }
 public class OnDeckChangedEventArgs : EventArgs {

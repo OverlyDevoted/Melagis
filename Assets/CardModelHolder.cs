@@ -14,7 +14,7 @@ public class CardModelHolder : MonoBehaviour
         foreach (Deck deckers in decks)
         {
             Debug.Log("Another");
-            deckers.PrintDeck();
+           
         }
     }
 }

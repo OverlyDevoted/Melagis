@@ -1,21 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;  
+using UnityEngine.InputSystem;
 using System;
 using UnityEngine.Events;
 public class InputManager : MonoBehaviour
 {
-    //public static InputManager instance;
+    public static InputManager instance;
     InputConfiguration inputs;
     GameObject selectedObject;
     public UnityEvent OnClick;
     private void Awake()
     {
         inputs = new InputConfiguration();
-        //instance = this;
         inputs.Enable();
         inputs.Main.Mouseclicks.performed += CheckForObject;
+        instance = this;
     }
     // Start is called before the first frame update
     void Start()

@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Card : MonoBehaviour
+public class Card 
 {
-    [SerializeField] GameObject cardModel;
+    GameObject cardModel;
     public int value;
     public Suits suit;
-    private void UpdateCard()
+    public Card(GameObject cardModel)
+    {
+        this.cardModel = cardModel;
+        UpdateCard(cardModel);
+    }
+    
+    private void UpdateCard(GameObject cardModel)
     {
         if (cardModel == null)
             return;
@@ -61,24 +67,10 @@ public class Card : MonoBehaviour
                 suit = Suits.Spade;
                 break;
         }
-        name = value.ToString() + temp[startIndex];
-        cardModel.AddComponent<BoxCollider>();
     }
-    // Start is called before the first frame update
-    void Start()
+    public new string ToString()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    public void SetCardModel(GameObject cardModel)
-    {
-        this.cardModel = cardModel;
-        UpdateCard();
+        return suit.ToString() + " " + value.ToString();
     }
 }
 public enum Suits

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Card 
 {
-    GameObject cardModel;
+    public GameObject cardModel { get; private set; }
     public int value;
     public Suits suit;
     public Card(GameObject cardModel)

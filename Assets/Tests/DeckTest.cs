@@ -22,6 +22,7 @@ public class DeckTest
         //test
         Assert.AreEqual(2, popResult.value);
     }
+    [Test]
     public void PopTestSuit()
     {
         //Deck
@@ -36,6 +37,7 @@ public class DeckTest
         //test
         Assert.AreEqual(Suits.Club, popResult.suit);
     }
+    [Test]
     public void EmptyDeckPopTest()
     {
         //Deck

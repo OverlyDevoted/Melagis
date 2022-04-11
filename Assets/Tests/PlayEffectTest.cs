@@ -8,7 +8,7 @@ public class TestPlayTrack {
 
     public PlayEffect myPlayEffect;
 
-    // Testas nesėkmingas
+    // Testas sėkmingas
 
     [Test]  // Testas MuteEffect() metodui.
     public void TestMuteEffect()  {
@@ -23,7 +23,7 @@ public class TestPlayTrack {
         Assert.AreEqual(1.0f, myPlayEffect.effectVolume);
     }
 
-    // Testas nesėkmingas
+    // Testas sėkmingas
 
      [Test] // Testas PlayMyEffect() metodui.
     public void TestPlayMyEffect() {

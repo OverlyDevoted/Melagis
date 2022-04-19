@@ -7,8 +7,11 @@ public class Card
     public GameObject cardModel { get; private set; }
     public int value;
     public Suits suit;
+    //AudioClip clip;
+    
     public Card(GameObject cardModel)
     {
+        
         this.cardModel = cardModel;
         UpdateCard(cardModel);
     }

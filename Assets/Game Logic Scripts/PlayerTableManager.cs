@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,10 +10,17 @@ public class PlayerTableManager : MonoBehaviour
 
     [SerializeField]
     GameObject deckModel;
-    
+
+    [SerializeField]
+    GameObject userHandUI;
+
+    UserDeckUI handUI;
+
     public int deckDistance = 3;
 
-    GameObject tableDeckObject; 
+    GameObject tableDeckObject;
+    string tableDeckName = "Table Deck";
+
 
     List<Player> playerList = new List<Player>();
     List<GameObject> playerDeckObjects = new List<GameObject>();
@@ -28,7 +36,7 @@ public class PlayerTableManager : MonoBehaviour
         InputManager.OnClick += HandleClick;   
     }
 
-    //add difficulty
+    //add difficulty && refactor xd
     public void InitializeTable(int players)
     {
         if(cardModels.Count < players)
@@ -37,7 +45,7 @@ public class PlayerTableManager : MonoBehaviour
             return;
         }
         tableDeckObject = Instantiate(deckModel);
-        tableDeckObject.name = "Table Deck";
+        tableDeckObject.name = tableDeckName;
         //initialize deck
         tableDeck = new Deck(cardModels);
         tableDeck.ShuffleDeck();
@@ -61,7 +69,6 @@ public class PlayerTableManager : MonoBehaviour
             playerList[i].OnTurnEnd.AddListener(() => {
                 playerDeckObjects[temp_i].GetComponent<Renderer>().material.color = Color.gray;
                 playerList[(temp_i+1)%i].StartTurn();
-                Debug.Log("Player who ended: " + playerList[temp_i].turnState);
             });
 
             // OnTurnStart behaviour for player: green in, wait for place card, place card, end turn
@@ -70,6 +77,7 @@ public class PlayerTableManager : MonoBehaviour
                 playerList[i].OnStartTurn.AddListener(() =>
                 {
                     playerDeckObjects[temp_i].GetComponent<Renderer>().material.color = Color.green;
+                    Debug.Log(playerList[temp_i].hand.ToString());
                 });
                 continue;
             }
@@ -77,9 +85,12 @@ public class PlayerTableManager : MonoBehaviour
             playerList[i].OnStartTurn.AddListener(() =>
             {
                 playerDeckObjects[temp_i].GetComponent<Renderer>().material.color = Color.green;
-                StartCoroutine(PlaceCard(temp_i, botTurnTime));
+                StartCoroutine(PlaceCard(temp_i, playerDecks[temp_i].deckCards.Count-1, botTurnTime));
             });
         }
+        userHandUI = Instantiate(userHandUI);
+        handUI = userHandUI.GetComponent<UserDeckUI>();
+        handUI.DisplayDeck(playerDecks[0]);
 
         //determine what player starts the game
         startIndex = Random.Range(0, players);
@@ -90,24 +101,26 @@ public class PlayerTableManager : MonoBehaviour
 
     private void HandleClick(object sender, GameObjectEventArgs e)
     {
-        int objectIndex = playerDeckObjects.IndexOf(e.go);
-
+        
         switch (playerList[0].turnState)
         {
             case TurnState.NotMyTurn:
                 Debug.Log("Not your turn");
                 break;
             default:
-                Debug.Log(objectIndex);
-                if (objectIndex == -1)
+                int objectIndex = playerList[0].hand.FindIndex(e.go.name);
+                if (objectIndex < 0)
                 {
-                    StartCoroutine(PlaceCard(0, 0f));
+                    Debug.Log("No such card");
+                    return;
                 }
+                StartCoroutine(PlaceCard(0, objectIndex, 0f));
                 break;
         }
     }
 
-    private IEnumerator PlaceCard(int player, float delay)
+    //refactor
+    private IEnumerator PlaceCard(int player, int index, float delay)
     {
         if (playerList[player].hand.deckCards.Count == 1)
         {
@@ -116,14 +129,19 @@ public class PlayerTableManager : MonoBehaviour
         }
         yield return new WaitForSeconds(delay);
 
-        Debug.Log(playerList[player].turnState);
-        
-        tableDeck.Push(playerList[player].hand.Pop());
+        tableDeck.Push(playerList[player].hand.RemoveAt(index));
+        foreach(Transform child in this.transform)
+            Destroy(child.gameObject);
         //move this
         GameObject card = Instantiate(tableDeck.deckCards[tableDeck.deckCards.Count - 1].cardModel);
+        card.transform.parent = this.transform;
         card.transform.localScale = SpawnCoordinates.CardScale(20);
         card.transform.Rotate(Vector3.left, 90f);
-        Debug.Log("Player " + player + " placed card " + card.ToString());
         playerList[player].EndTurn();
+        if (player == 0)
+        {
+            handUI.DisplayDeck(playerList[0].hand);
+        }
+            
     }
 }

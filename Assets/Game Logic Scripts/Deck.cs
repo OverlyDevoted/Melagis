@@ -87,12 +87,29 @@ public class Deck
     }
     public Card Pop()
     {
+        return RemoveAt(deckCards.Count-1);
+    }
+    public Card RemoveAt(int index)
+    {
         if (deckCards.Count == 0)
             return null;
-        Card removed = deckCards[deckCards.Count - 1];
-        deckCards.RemoveAt(deckCards.Count - 1);
+        if (index < 0 && index > deckCards.Count - 1)
+            return null;
+        Card removed = deckCards[index];
+        deckCards.RemoveAt(index);
         OnCardRemoved?.Invoke(this, new OnDeckChangedEventArgs(removed, null));
         return removed;
+    }
+    public int FindIndex(string cardString)
+    {
+        for(int i=0;i<deckCards.Count;i++)
+        {
+            if(cardString == deckCards[i].ToString())
+            {
+                return i;
+            }
+        }
+        return -1;
     }
     public void AddDeck(Deck deck, GameObject from)
     {

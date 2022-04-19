@@ -10,7 +10,7 @@ public class StatisticsTest : MonoBehaviour
     public void TestAddSum()
     {
         GameObject testObject = new GameObject();
-        Statisticsscript statistics = testObject.AddComponent<Statisticsscript>();
+        StatisticsHandler statistics = testObject.AddComponent<StatisticsHandler>();
         Assert.AreEqual(10, statistics.AddSum(5, 5));
     }
 }

@@ -12,7 +12,8 @@ public class StatisticsTest2 : MonoBehaviour
     public void TestCompareTwoDataFiles()
     {
         GameObject testObject = new GameObject();
-        Statisticsscript statistics = testObject.AddComponent<Statisticsscript>();
+        StatisticsHandler statistics = testObject.AddComponent<StatisticsHandler>();
+        //ar sito reikia kodo???
         string line = "";
         try
         {

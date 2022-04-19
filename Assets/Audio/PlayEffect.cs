@@ -16,7 +16,7 @@ public class PlayEffect : MonoBehaviour {
     // Pridėti papildomi kintamieji nenumatyti UML.
 
     public float effectVolume {get; private set;} = 1.0f;
-    [SerializeField] public AudioSource effectSource {get; private set;}
+    [SerializeField] public AudioSource effectSource;
     
     // Šis metodas (susietas su mygtuku) leidžia įjungti/išjungti garso efektus.
 

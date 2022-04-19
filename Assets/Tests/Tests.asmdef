@@ -6,7 +6,6 @@
         "UnityEditor.TestRunner",
         "GameLogicScripts",
         "PlayScripts",
-        "",
         "StatisticsScripts"
     ],
     "includePlatforms": [

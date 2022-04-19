@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Card 
 {
-    GameObject cardModel;
+    public GameObject cardModel { get; private set; }
     public int value;
     public Suits suit;
+    //AudioClip clip;
+    
     public Card(GameObject cardModel)
     {
+        
         this.cardModel = cardModel;
         UpdateCard(cardModel);
     }

@@ -12,4 +12,8 @@ public static class SpawnCoordinates
         int index = players - 3;
         return coordinates[index];
     }
+    public static Vector3 CardScale(int multiplier)
+    {
+        return new Vector3(1f, 1f, 1f) * multiplier;
+    }
 }

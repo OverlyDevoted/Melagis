@@ -97,3 +97,6 @@ MonoBehaviour:
   - {fileID: 100000, guid: 8fef523a36fb4384dbd542c31b34f451, type: 3}
   - {fileID: 100000, guid: da2d1fefc52dcde4db0b9c8ab07e55a3, type: 3}
   deckModel: {fileID: 6602839853041965229, guid: 4ad8d3963ba91a24a9afae498d050c44, type: 3}
+  userHandUI: {fileID: 6034987420785410232, guid: 0ad6756ff4d7826469e87c7f7a4fdef6, type: 3}
+  deckDistance: 3
+  botTurnTime: 1

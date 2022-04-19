@@ -4,10 +4,7 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "GameLogicScripts",
-        "PlayScripts",
-        "",
-        "StatisticsScripts"
+        "GameLogicScripts"
     ],
     "includePlatforms": [
         "Editor"
